@@ -24,5 +24,13 @@
 
 # Presence of this file in a folder will exclude the folder from the rsync operation
 excludeFlag=".exclude"
+excludeList="excludelist.tmp"
+workingPath=$1
 
+# Debug
+echo "Working path was defined as ["$workingPath"]"
 
+echo "Looking for ["$excludeFlag"]"
+
+# Create the list of folders to exclude
+find $workingPath -name "$excludeFlag" -exec dirname {} \; > $excludeList
