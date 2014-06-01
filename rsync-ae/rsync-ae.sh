@@ -22,15 +22,37 @@
 
 # Definitions
 
+inputPath=$1
+outputPath=$2
+
 # Presence of this file in a folder will exclude the folder from the rsync operation
 excludeFlag=".exclude"
-excludeList="excludelist.tmp"
-workingPath=$1
 
-# Debug
-echo "Working path was defined as ["$workingPath"]"
+# Options to pass along to rsync
+# For non-destructive operation, remove --delete
+rsyncOptions="-axvh --progress --delete"
 
-echo "Looking for ["$excludeFlag"]"
+# The location of the temporary exclusion file
+# Ensure the user running this script has write permission to that folder
+excludeList="/tmp/excludelist.tmp"
+
+# ------------------------------------------------------------------
+
+# Check that parameters were passed
+if [ -z "$inputPath" ] || [ -z "$outputPath" ]
+then
+	echo "ERROR : rsync-ae requires two parameters (input path, output path)"
+	exit 1
+fi
 
 # Create the list of folders to exclude
-find $workingPath -name "$excludeFlag" -exec dirname {} \; > $excludeList
+echo "Building exclusion list"
+inputPathLen=${#inputPath}
+find $inputPath -name "$excludeFlag" -exec dirname {} \; | cut -c $inputPathLen- > $excludeList
+
+# Process the rsync command
+echo "Beginning rsync operation"
+rsync $rsyncOptions --exclude-from=$excludeList $inputPath $outputPath
+
+# Delete the temporary file
+rm $excludeList
