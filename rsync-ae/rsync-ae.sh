@@ -1,7 +1,7 @@
 #!/bin/bash
 # ------------------------------------------------------------------
-# Purpose: Runs rsync on a given target and excludes any folder that
-#          contains a file called .exclude
+# Purpose: Recursively duplicates a folder using rsync while omitting
+#          subfolders that contain a given flag file. 
 #
 # Copyright (C) 2014 Gaelan Lloyd
 #
